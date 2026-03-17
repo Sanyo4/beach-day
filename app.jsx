@@ -567,6 +567,40 @@ function SeaBackground() {
   );
 }
 
+/* ── Flexible plan note ── */
+function FlexNote({ dismissed, onDismiss }) {
+  if (dismissed) return null;
+  return (
+    <div style={{
+      maxWidth: 480, margin: "16px auto 0", padding: "0 16px",
+    }}>
+      <div style={{
+        background: `linear-gradient(135deg, #E8F4FD, #F0F7FF)`,
+        border: "1.5px solid #B8D8E8",
+        borderRadius: 16, padding: "12px 14px",
+        display: "flex", alignItems: "flex-start", gap: 10,
+        position: "relative",
+      }}>
+        <span style={{ fontSize: 16, flexShrink: 0, lineHeight: 1.3 }}>*</span>
+        <div style={{ fontFamily: font, fontSize: 11.5, color: colors.textDark, lineHeight: 1.6, flex: 1 }}>
+          Cold Knap is optional — if the group prefers, we can skip it and just stay in Barry Island instead. The rest of the day stays the same from Goodsheds onward.
+        </div>
+        <button
+          onClick={(e) => { e.stopPropagation(); onDismiss(); }}
+          style={{
+            background: "none", border: "none", cursor: "pointer",
+            fontFamily: font, fontSize: 16, color: colors.textLight,
+            padding: "0 2px", lineHeight: 1, flexShrink: 0,
+          }}
+          aria-label="Dismiss note"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /* ── Footer ── */
 function Footer() {
   return (
@@ -590,6 +624,7 @@ export default function BeachDayApp() {
   const [expandedStop, setExpandedStop] = useState(null);
   const [visibleStops, setVisibleStops] = useState([]);
   const [costExpanded, setCostExpanded] = useState(false);
+  const [noteDismissed, setNoteDismissed] = useState(false);
 
   useEffect(() => {
     stops.forEach((_, i) => {
@@ -658,6 +693,8 @@ export default function BeachDayApp() {
         <RulesCard />
         <TransportInfo />
       </div>
+
+      <FlexNote dismissed={noteDismissed} onDismiss={() => setNoteDismissed(true)} />
 
       <Footer />
       </div>
