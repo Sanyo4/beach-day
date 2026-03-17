@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { meta, stops, costs, totalCost } from "./data.js";
+import { meta, stops, costs, totalCost, rules } from "./data.js";
 
 /* ── keyframe animations (injected once) ── */
 const keyframes = `
@@ -22,6 +22,18 @@ const keyframes = `
 @keyframes waveDrift {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+@keyframes bgWave1 {
+  0%, 100% { d: path("M0,12 C80,18 160,4 240,12 C320,20 400,6 480,12 C560,18 640,4 720,12 L720,40 L0,40 Z"); }
+  50% { d: path("M0,14 C80,6 160,20 240,14 C320,8 400,18 480,14 C560,8 640,20 720,14 L720,40 L0,40 Z"); }
+}
+@keyframes bgWave2 {
+  0%, 100% { d: path("M0,16 C100,22 200,10 360,16 C520,22 620,10 720,16 L720,40 L0,40 Z"); }
+  50% { d: path("M0,18 C100,10 200,22 360,18 C520,10 620,22 720,18 L720,40 L0,40 Z"); }
+}
+@keyframes bgWave3 {
+  0%, 100% { d: path("M0,20 C120,26 240,14 360,20 C480,26 600,14 720,20 L720,40 L0,40 Z"); }
+  50% { d: path("M0,22 C120,14 240,26 360,22 C480,14 600,26 720,22 L720,40 L0,40 Z"); }
 }
 `;
 
@@ -420,8 +432,72 @@ function TideWarning() {
     }}>
       <span style={{ fontSize: 18, flexShrink: 0, lineHeight: 1.3 }}>🌊</span>
       <div style={{ fontFamily: font, fontSize: 11.5, color: "#8B6914", lineHeight: 1.6 }}>
-        <strong>Tide note:</strong> Low tide at {meta.tideLow} — Cold Knap rock pools at their best in the afternoon. {meta.tideWarning}.
+        <strong>Tide note:</strong> {meta.tideWarning}
       </div>
+    </div>
+  );
+}
+
+/* ── Rules card ── */
+function RulesCard() {
+  return (
+    <div style={{
+      background: colors.cardBg, borderRadius: 18, overflow: "hidden",
+      boxShadow: colors.shadow, border: "1px solid rgba(92,74,58,0.06)",
+    }}>
+      <div style={{ height: 4, background: colors.headerGreen }} />
+      <div style={{ padding: "12px 14px" }}>
+        <div style={{
+          fontFamily: font, fontSize: 14, fontWeight: 800, color: colors.textDark,
+          marginBottom: 10, display: "flex", alignItems: "center", gap: 8,
+        }}>
+          <span style={{ fontSize: 18 }}>📋</span> The Rules
+        </div>
+        {rules.map((rule, i) => (
+          <div key={i} style={{
+            display: "flex", gap: 8, marginBottom: i < rules.length - 1 ? 8 : 0,
+            fontFamily: font, fontSize: 12, color: colors.textDark, lineHeight: 1.5,
+          }}>
+            <span style={{ color: colors.bellYellow, fontWeight: 800, flexShrink: 0 }}>✦</span>
+            <span>{rule}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Animated sea background ── */
+function SeaBackground() {
+  return (
+    <div style={{
+      position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
+      pointerEvents: "none", zIndex: 0, overflow: "hidden",
+    }}>
+      {/* Subtle repeating wave layers at the bottom */}
+      <svg viewBox="0 0 720 40" preserveAspectRatio="none" style={{
+        position: "absolute", bottom: 0, left: 0, width: "100%", height: 80, opacity: 0.06,
+      }}>
+        <path d="M0,12 C80,18 160,4 240,12 C320,20 400,6 480,12 C560,18 640,4 720,12 L720,40 L0,40 Z"
+          fill={colors.headerGreen} style={{ animation: "bgWave1 6s ease-in-out infinite" }} />
+      </svg>
+      <svg viewBox="0 0 720 40" preserveAspectRatio="none" style={{
+        position: "absolute", bottom: 0, left: 0, width: "100%", height: 60, opacity: 0.05,
+      }}>
+        <path d="M0,16 C100,22 200,10 360,16 C520,22 620,10 720,16 L720,40 L0,40 Z"
+          fill="#7EC8E3" style={{ animation: "bgWave2 8s ease-in-out infinite" }} />
+      </svg>
+      <svg viewBox="0 0 720 40" preserveAspectRatio="none" style={{
+        position: "absolute", bottom: 0, left: 0, width: "100%", height: 45, opacity: 0.04,
+      }}>
+        <path d="M0,20 C120,26 240,14 360,20 C480,26 600,14 720,20 L720,40 L0,40 Z"
+          fill="#A8D8B9" style={{ animation: "bgWave3 10s ease-in-out infinite" }} />
+      </svg>
+      {/* Very faint top shimmer */}
+      <div style={{
+        position: "absolute", top: 0, left: 0, width: "100%", height: "40%",
+        background: "linear-gradient(180deg, rgba(168,216,185,0.03) 0%, transparent 100%)",
+      }} />
     </div>
   );
 }
@@ -461,9 +537,12 @@ export default function BeachDayApp() {
       fontFamily: font,
       background: colors.bg,
       minHeight: "100vh",
+      position: "relative",
     }}>
       <style>{keyframes}</style>
+      <SeaBackground />
 
+      <div style={{ position: "relative", zIndex: 1 }}>
       <Header />
       <InfoStrip />
       <MeetingCard />
@@ -497,10 +576,12 @@ export default function BeachDayApp() {
         display: "flex", flexDirection: "column", gap: 10,
       }}>
         <CostBreakdown expanded={costExpanded} onToggle={() => setCostExpanded(!costExpanded)} />
+        <RulesCard />
         <TransportInfo />
       </div>
 
       <Footer />
+      </div>
     </div>
   );
 }
