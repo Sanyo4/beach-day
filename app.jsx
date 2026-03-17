@@ -567,6 +567,56 @@ function SeaBackground() {
   );
 }
 
+/* ── Cloud skip note (top) ── */
+function SkipCloudNote({ dismissed, onDismiss }) {
+  if (dismissed) return null;
+  return (
+    <div style={{ maxWidth: 480, margin: "10px auto 0", padding: "0 16px" }}>
+      <div style={{
+        background: "linear-gradient(135deg, #EAF4FB, #F5F9FF)",
+        border: "1.5px solid #B0D4EE",
+        borderRadius: "50px 50px 44px 44px / 40px 40px 36px 36px",
+        padding: "10px 14px 10px 12px",
+        boxShadow: "0 6px 18px rgba(120,180,220,0.18), 0 2px 6px rgba(120,180,220,0.12)",
+        display: "flex", alignItems: "center", gap: 10, position: "relative",
+      }}>
+        {/* cloud bumps across the top */}
+        <div style={{
+          position: "absolute", top: -8, left: "50%", transform: "translateX(-50%)",
+          display: "flex", gap: 6, pointerEvents: "none",
+        }}>
+          {[18, 26, 22, 28, 20].map((w, i) => (
+            <div key={i} style={{
+              width: w, height: w * 0.7,
+              background: "linear-gradient(180deg, #EAF4FB, #D6EBFA)",
+              border: "1.5px solid #B0D4EE",
+              borderRadius: "50% 50% 40% 40%",
+              marginTop: i % 2 === 0 ? 4 : 0,
+            }} />
+          ))}
+        </div>
+        <span style={{ fontSize: 18, flexShrink: 0 }}>☁️</span>
+        <div style={{
+          fontFamily: font, fontSize: 11.5, color: colors.textDark, lineHeight: 1.6, flex: 1,
+        }}>
+          <strong>Stone beach is optional</strong> — if the group prefers, we can skip Cold Knap and stay at Barry Island instead. Everything from Goodsheds onward stays the same.
+        </div>
+        <button
+          onClick={(e) => { e.stopPropagation(); onDismiss(); }}
+          style={{
+            background: "none", border: "none", cursor: "pointer",
+            fontFamily: font, fontSize: 16, color: colors.textLight,
+            padding: "0 2px", lineHeight: 1, flexShrink: 0,
+          }}
+          aria-label="Dismiss"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /* ── Flexible plan note ── */
 function FlexNote({ dismissed, onDismiss }) {
   if (dismissed) return null;
@@ -625,6 +675,7 @@ export default function BeachDayApp() {
   const [visibleStops, setVisibleStops] = useState([]);
   const [costExpanded, setCostExpanded] = useState(false);
   const [noteDismissed, setNoteDismissed] = useState(false);
+  const [skipNoteDismissed, setSkipNoteDismissed] = useState(false);
 
   useEffect(() => {
     stops.forEach((_, i) => {
@@ -657,6 +708,8 @@ export default function BeachDayApp() {
           {meta.subtitle}
         </div>
       </div>
+
+      <SkipCloudNote dismissed={skipNoteDismissed} onDismiss={() => setSkipNoteDismissed(true)} />
 
       <InfoStrip />
       <MeetingCard />
