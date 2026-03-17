@@ -198,7 +198,7 @@ function StopCard({ stop, index, expanded, onToggle, visible }) {
     }
   }, [expanded]);
 
-  const hasDetails = stop.description || (stop.tips && stop.tips.length > 0) || stop.quote;
+  const hasDetails = stop.description || (stop.tips && stop.tips.length > 0) || stop.quote || stop.whyUber || stop.openNote;
 
   return (
     <div style={{
@@ -298,6 +298,71 @@ function StopCard({ stop, index, expanded, onToggle, visible }) {
                     <span>{tip}</span>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Why Uber info box */}
+            {stop.whyUber && (
+              <div style={{
+                background: "linear-gradient(135deg, #FFF3E0, #FFF8F0)",
+                border: `1.5px solid ${colors.bellYellow}`,
+                borderRadius: 12, padding: "12px 14px", marginBottom: 12,
+              }}>
+                <div style={{
+                  fontFamily: font, fontSize: 11, fontWeight: 800, color: "#8B6914",
+                  textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8,
+                }}>
+                  Why Uber?
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <div style={{
+                    display: "flex", alignItems: "flex-start", gap: 8,
+                    fontFamily: font, fontSize: 11.5, lineHeight: 1.5,
+                  }}>
+                    <span style={{ color: "#D45B5B", fontWeight: 800, flexShrink: 0, fontSize: 13 }}>✗</span>
+                    <div style={{ color: colors.textDark }}>
+                      <strong style={{ color: "#D45B5B" }}>Walk (28 min)</strong> → arrive 2:03pm → 46 min after low tide → rock pools covering over, significant beach lost
+                    </div>
+                  </div>
+                  <div style={{
+                    display: "flex", alignItems: "flex-start", gap: 8,
+                    fontFamily: font, fontSize: 11.5, lineHeight: 1.5,
+                  }}>
+                    <span style={{ color: colors.leafGreen, fontWeight: 800, flexShrink: 0, fontSize: 13 }}>✓</span>
+                    <div style={{ color: colors.textDark }}>
+                      <strong style={{ color: colors.leafGreen }}>Uber (6 min)</strong> → arrive 1:40pm → 23 min after low tide → full beach and rock pools exposed
+                    </div>
+                  </div>
+                </div>
+                <div style={{
+                  fontFamily: font, fontSize: 11, fontStyle: "italic", color: colors.textMid,
+                  marginTop: 8, lineHeight: 1.5,
+                }}>
+                  The Bristol Channel has an 11 metre tidal range and rises extremely fast. The £5–6 split is worth every penny.
+                </div>
+              </div>
+            )}
+
+            {/* Goodsheds open note + address */}
+            {stop.openNote && (
+              <div style={{
+                display: "flex", alignItems: "center", gap: 6, marginBottom: 10,
+                flexWrap: "wrap",
+              }}>
+                <span style={{
+                  fontFamily: font, fontSize: 10, fontWeight: 700,
+                  background: `${stop.accent}30`, color: colors.textDark,
+                  borderRadius: 8, padding: "3px 8px", whiteSpace: "nowrap",
+                }}>
+                  {stop.openNote}
+                </span>
+                {stop.address && (
+                  <span style={{
+                    fontFamily: font, fontSize: 10, color: colors.textMid,
+                  }}>
+                    {stop.address}
+                  </span>
+                )}
               </div>
             )}
 
@@ -544,6 +609,20 @@ export default function BeachDayApp() {
 
       <div style={{ position: "relative", zIndex: 1 }}>
       <Header />
+
+      {/* Subtitle route line */}
+      <div style={{
+        textAlign: "center", padding: "12px 16px 0",
+        maxWidth: 480, margin: "0 auto",
+      }}>
+        <div style={{
+          fontFamily: font, fontSize: 11, fontWeight: 600,
+          color: colors.textMid, letterSpacing: "0.03em",
+        }}>
+          {meta.subtitle}
+        </div>
+      </div>
+
       <InfoStrip />
       <MeetingCard />
 
